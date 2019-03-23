@@ -2,18 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace Repository.Domain.Repositories
 {
-    public interface IRepository<TEntity, TKey> where TEntity : BaseModel
+    public interface IRepository<TEntity, TPrimaryKey> where TEntity : BaseModel
     {
-        Task<IEnumerable<TEntity>> GetAllAsync();
-        Task<TEntity> GetAsync(TKey key);
-        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
-        Task AddAsync(TEntity entity);
-        Task AddRangeAsync(IEnumerable<TEntity> entities);
-        Task RemoveAsync(TEntity entity);
-        Task RemoveRangeAsync(IEnumerable<TEntity> entities);
+        IEnumerable<TEntity> GetAll();
+        TEntity Get(TPrimaryKey key);
+        IEnumerable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
+        void Add(TEntity entity);
+        void Remove(TEntity entity);
+        TEntity Update(TEntity entity);
     }
 }

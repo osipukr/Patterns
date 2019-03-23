@@ -13,22 +13,13 @@ namespace Repository
             using (var uow = new UnitOfWork(new AppDbContext()))
             {
                 Console.WriteLine("Albums:");
-                uow.Albums.GetAll().ToList().ForEach(album =>
-                {
-                    PrintAlbum(album);
-                });
+                uow.Albums.GetAll().ToList().ForEach(album => PrintAlbum(album));
 
                 Console.WriteLine("Photos:");
-                uow.Photos.GetAll().ToList().ForEach(photo =>
-                {
-                    PrintPhoto(photo);
-                });
+                uow.Photos.GetAll().ToList().ForEach(photo => PrintPhoto(photo));
 
                 Console.WriteLine("Images:");
-                uow.Images.GetAll().ToList().ForEach(image =>
-                {
-                    PrintImage(image);
-                });
+                uow.Images.GetAll().ToList().ForEach(image => PrintImage(image));
             }
 
             Console.ReadKey();

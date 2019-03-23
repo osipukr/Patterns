@@ -1,28 +1,28 @@
 ﻿using Repository.Domain.Repositories;
 using Repository.Persistence.Contexts;
-using System.Threading.Tasks;
 
 namespace Repository.Persistence.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
-        private readonly IAlbumRepository _album;
-        private readonly IPhotoRepository _photo;
-        private readonly IImageRepository _image;
 
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
+
+            Albums = new AlbumRepository(_context);
+            Photos = new PhotoRepository(_context);
+            Images = new ImageRepository(_context);
         }
 
-        public IAlbumRepository Albums => _album ?? new AlbumRepository(_context);
-        public IPhotoRepository Photos => _photo ?? new PhotoRepository(_context);
-        public IImageRepository Images => _image ?? new ImageRepository(_context);
+        public IAlbumRepository Albums { get; private set; }
+        public IPhotoRepository Photos { get; private set; }
+        public IImageRepository Images { get; private set; }
 
-        public async Task CompleteAsync()
+        public void Complete()
         {
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
         public void Dispose()

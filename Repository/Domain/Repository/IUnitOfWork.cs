@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Repository.Domain.Repositories
 {
@@ -9,6 +8,6 @@ namespace Repository.Domain.Repositories
         IPhotoRepository Photos { get; }
         IImageRepository Images { get; }
 
-        Task CompleteAsync();
+        void Complete();
     }
 }

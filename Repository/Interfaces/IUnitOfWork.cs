@@ -1,13 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 
-namespace Repository.Domain.Repositories
+namespace Repository.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
         IAlbumRepository Albums { get; }
         IPhotoRepository Photos { get; }
-        IImageRepository Images { get; }
 
-        void Complete();
+        Task CompleteAsync();
     }
 }

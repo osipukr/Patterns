@@ -1,50 +1,62 @@
-﻿using Repository.Domain.Models;
-using Repository.Persistence.Contexts;
-using Repository.Persistence.Repositories;
-using System;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Repository.Contexts;
+using Repository.Models;
+using Repository.Repositories;
 
 namespace Repository
 {
-    class Program
+    public sealed class Program
     {
-        static void Main(string[] args)
+        private static string ConnectionString => "Server=localhost;Database=repository-pattern3-db;Trusted_Connection=True;";
+
+        public static async Task Main()
         {
-            using (var uow = new UnitOfWork(new AppDbContext()))
+            var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
+                .UseSqlServer(ConnectionString)
+                .Options;
+
+            var context = new AppDbContext(dbOptions);
+
+            if (await context.Database.EnsureCreatedAsync())
             {
-                Console.WriteLine("Albums:");
-                uow.Albums.GetAll().ToList().ForEach(album => PrintAlbum(album));
-
-                Console.WriteLine("Photos:");
-                uow.Photos.GetAll().ToList().ForEach(photo => PrintPhoto(photo));
-
-                Console.WriteLine("Images:");
-                uow.Images.GetAll().ToList().ForEach(image => PrintImage(image));
+                await context.SeedAsync();
             }
 
-            Console.ReadKey();
+            using var uow = new UnitOfWork(context);
+
+            PrintAlbums(await uow.Albums.GetAll().ToListAsync());
+            PrintPhotos(await uow.Photos.GetAll().ToListAsync());
         }
 
-        #region PrintHelper
-        private static void PrintAlbum(Album album)
+        #region Print Helpers
+
+        private static void PrintAlbums(IEnumerable<Album> albums)
         {
-            Console.WriteLine($"Album | Id - {album.Id}");
-            Console.WriteLine($"Album | Name - {album.Name}");
-            Console.WriteLine($"Album | Description - {album.Description}\n");
+            Console.WriteLine("Albums:");
+
+            foreach (var album in albums)
+            {
+                Console.WriteLine($"Album | Id - {album.Id}");
+                Console.WriteLine($"Album | Name - {album.Name}");
+                Console.WriteLine($"Album | Description - {album.Description}\n");
+            }
         }
 
-        private static void PrintPhoto(Photo photo)
+        private static void PrintPhotos(IEnumerable<Photo> photos)
         {
-            Console.WriteLine($"Photo | Id - {photo.Id}");
-            Console.WriteLine($"Photo | ImageId - {photo.ImageId}\n");
+            Console.WriteLine("Photos:");
+
+            foreach (var photo in photos)
+            {
+                Console.WriteLine($"Photo | Id - {photo.Id}");
+                Console.WriteLine($"Photo | Url - {photo.Url}");
+                Console.WriteLine($"Photo | AlbumId - {photo.AlbumId}\n");
+            }
         }
 
-        private static void PrintImage(Image image)
-        {
-            Console.WriteLine($"Image | Id - {image.Id}");
-            Console.WriteLine($"Image | Url - {image.Url}");
-            Console.WriteLine($"Image | PhotoId - {image.PhotoId}\n");
-        }
         #endregion
     }
 }

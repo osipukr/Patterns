@@ -1,7 +1,8 @@
-﻿using Repository.Domain.Repositories;
-using Repository.Persistence.Contexts;
+﻿using System.Threading.Tasks;
+using Repository.Contexts;
+using Repository.Interfaces;
 
-namespace Repository.Persistence.Repositories
+namespace Repository.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -13,21 +14,13 @@ namespace Repository.Persistence.Repositories
 
             Albums = new AlbumRepository(_context);
             Photos = new PhotoRepository(_context);
-            Images = new ImageRepository(_context);
         }
 
         public IAlbumRepository Albums { get; private set; }
         public IPhotoRepository Photos { get; private set; }
-        public IImageRepository Images { get; private set; }
 
-        public void Complete()
-        {
-            _context.SaveChanges();
-        }
+        public async Task CompleteAsync() => await _context.SaveChangesAsync();
 
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
+        public void Dispose() => _context.Dispose();
     }
 }
